@@ -1,40 +1,36 @@
-# MINTFORGE Worldwide Shipping Model
+# MINTFORGE Shipping Model
 
-MINTFORGE supports international physical-goods shipping without a central admin wallet.
+MINTFORGE uses a deliberately simple seller shipping model.
 
-## Seller shipping profiles
-Each connected seller wallet can manage its own shipping zones. A seller may create:
-- Worldwide zone
-- Country-group / region zone
-- Specific-country zone
-- Free shipping or flat-rate shipping
-- Country exclusions
-- Processing-time minimum and maximum
+## Seller options
+Every physical product has exactly one of three shipping options:
 
-Matching priority is **specific country → country group/region → worldwide**. A seller's shipping rules apply to listings owned by that seller wallet. Listing-level shipping remains as a safe fallback when no seller zone matches.
+1. **Free Shipping** — buyer pays $0 shipping.
+2. **Flat Rate** — one fixed shipping price set by the seller.
+3. **Worldwide Flat Rate** — one Australia price and one international price.
 
-## Buyer addresses
-- ISO 3166-1 alpha-2 country codes
-- Full international country selection
+There are no seller shipping zones, country groups, exclusions, weight tables, profiles, or custom shipping engines in the storefront UI.
+
+## Buyer profile
+The connected wallet can save a reusable shipping profile containing:
 - Full name
 - Email
-- Address line 1/2
-- City
-- State/province/region (optional by country)
-- Postal/ZIP code (optional by country)
-- Saved wallet-specific shipping profile
+- Address line 1
+- Address line 2 (optional)
+- City / suburb
+- State / province / region
+- Postal / ZIP code
+- Country
+
+Country selection uses the ISO alpha-2 country code and includes the full country list.
 
 ## Checkout
-The checkout service resolves shipping from the destination country and each seller's active shipping zones. Multi-seller carts are supported: each seller's shipping amount is calculated separately and included in that seller's payment split.
+The buyer selects their country and enters their delivery details. The checkout service remains the source of truth for the final shipping amount and total. The client only displays an estimate and sends the destination to checkout creation.
 
-The server calculates the final subtotal, shipping and total. Buyers cannot override seller shipping prices from the client.
+For a multi-seller cart, each seller's applicable shipping amount can be included in the server-calculated payment split.
 
 ## Order snapshot
-The exact destination country, address, shipping amount and shipping method are copied into `order_shipping` and the order totals at checkout creation. Later seller/listing shipping changes do not alter an existing order.
+At checkout creation, the final destination and shipping amount are captured with the order so later listing changes do not rewrite an existing order.
 
-## Security
-- Shipping totals are calculated server-side.
-- Seller shipping zones are restricted to the connected seller wallet.
-- Seller order/listing access remains wallet-scoped.
-- No central admin receiving wallet is required for seller payments.
-- Failed checkout creation does not create a fulfilable paid order.
+## Principle
+Keep shipping simple now. More advanced shipping rules can be added later only if the business actually needs them; they should not be implemented as hidden compatibility layers or frontend patches.
