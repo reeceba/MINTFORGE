@@ -1,76 +1,71 @@
-/* MINTFORGE CART — V4 CLEAN REBUILD
-   Single cart controller. No legacy cart listeners.
-   - Cart button only while wallet is connected.
-   - Full-screen mobile-friendly cart.
-   - + / - / REMOVE are owned by this file only.
-   - Disconnect clears/hides the cart immediately.
-   - Uses the existing cart array and checkout functions so payments/shipping stay intact.
+/* MINTFORGE CART — V5 HARD RESET
+   One cart controller. Does not depend on window.cart being exposed.
+   Uses the page's existing cart/changeQty/removeItem functions when available,
+   with a direct cart-array fallback for remove/quantity operations.
 */
 (()=>{
  const wait=(fn,tries=300)=>{let n=0;const t=setInterval(()=>{try{if(fn()||++n>=tries)clearInterval(t)}catch(e){}},100)};
  const $=id=>document.getElementById(id);
-
+ const g=name=>{try{return window[name]}catch(e){}try{return Function('try{return '+name+'}catch(e){return null}')()}catch(e){return null}};
+ const cartRef=()=>{const w=g('cart');if(Array.isArray(w))return w;try{const a=eval('cart');if(Array.isArray(a))return a}catch(e){}return null};
+ const fn=name=>{const w=g(name);return typeof w==='function'?w:null};
  function connected(){
-  const label=$('walletLabel');
-  if(label && /wallet\s+not\s+connected/i.test(label.textContent||''))return false;
-  const btn=$('connectBtn');
-  if(btn && !btn.classList.contains('hidden') && /connect wallet/i.test(btn.textContent||''))return false;
-  try{if(typeof wallet!=='undefined' && wallet===null)return false}catch(e){}
-  return true;
+  const w=g('wallet'); if(w) return true;
+  const label=$('walletLabel')?.textContent||'';
+  if(/wallet\s+not\s+connected/i.test(label)) return false;
+  const cb=$('connectBtn');
+  if(cb && !cb.classList.contains('hidden') && /connect wallet/i.test(cb.textContent||'')) return false;
+  return false;
  }
- function cartArray(){
-  try{if(Array.isArray(window.cart))return window.cart}catch(e){}
-  try{if(typeof cart!=='undefined' && Array.isArray(cart))return cart}catch(e){}
-  return null;
- }
- function clearCartState(){
-  const a=cartArray();if(a)a.splice(0,a.length);
-  try{if(typeof window.renderCart==='function')window.renderCart()}catch(e){}
- }
- function getCartCount(){const a=cartArray();return a?a.reduce((n,x)=>n+Math.max(0,Number(x.quantity||0)),0):0}
- function hideCartButton(){const b=$('mfCartCleanButton');if(b)b.style.display='none';$('mfCartV2Button')?.remove();$('mfCartV3Button')?.remove()}
- function showCartButton(){const b=$('mfCartCleanButton');if(b)b.style.display='inline-flex'}
- function closeCart(){const c=$('cart');if(c)c.classList.remove('mf-cart-clean-open');document.body.style.overflow=''}
- function updateBadge(){const n=getCartCount(),b=$('mfCartCleanBadge'),c=$('mfCartCleanCount');if(b)b.textContent=String(n);if(c)c.textContent=`${n} ${n===1?'ITEM':'ITEMS'}`;if(n===0)closeCart()}
- function syncWallet(){if(connected())showCartButton();else{clearCartState();closeCart();hideCartButton()}updateBadge()}
- function extractId(btn){
+ function count(){const a=cartRef();return a?a.reduce((n,x)=>n+Math.max(0,Number(x?.quantity||0)),0):0}
+ function render(){const r=fn('renderCart');if(r)try{r()}catch(e){}}
+ function find(id){const a=cartRef();if(!a)return -1;return a.findIndex(x=>String(x?.product_id??x?.id??'')===String(id))}
+ function directQty(id,delta){const a=cartRef(),i=find(id);if(!a||i<0)return false;a[i].quantity=Math.max(0,Number(a[i].quantity||0)+delta);if(a[i].quantity<=0)a.splice(i,1);render();return true}
+ function directRemove(id){const a=cartRef(),i=find(id);if(!a||i<0)return false;a.splice(i,1);render();return true}
+ function itemId(btn){
   if(btn.dataset.mfCartId)return btn.dataset.mfCartId;
-  const oc=btn.getAttribute('onclick')||'';
-  const m=oc.match(/(?:changeQty|removeItem)\(\s*['\"]([^'\"]+)['\"]/);if(m)return m[1];
-  const row=btn.closest('.item'),any=row?.querySelector('[onclick*="changeQty"],[onclick*="removeItem"]'),s=any?.getAttribute('onclick')||'';
-  const mm=s.match(/(?:changeQty|removeItem)\(\s*['\"]([^'\"]+)['\"]/);return mm?mm[1]:'';
+  const read=s=>{const m=String(s||'').match(/(?:changeQty|removeItem)\\(\\s*['\"]([^'\"]+)['\"]/);return m?.[1]||''};
+  return read(btn.getAttribute('onclick'))||read(btn.closest('.item')?.querySelector('[onclick*="changeQty"],[onclick*="removeItem"]')?.getAttribute('onclick'));
  }
- function prepareControls(){const box=$('cartItems');if(!box)return;box.querySelectorAll('.qty button').forEach(btn=>{const text=(btn.textContent||'').trim().toLowerCase(),id=extractId(btn);if(!id)return;btn.dataset.mfCartId=id;btn.dataset.mfCartAction=text==='remove'?'remove':(text==='+'?'plus':'minus');btn.removeAttribute('onclick');btn.type='button';btn.style.touchAction='manipulation'})}
+ function prepare(){
+  const box=$('cartItems');if(!box)return;
+  box.querySelectorAll('.qty button').forEach(b=>{const id=itemId(b),txt=(b.textContent||'').trim().toLowerCase();if(!id)return;b.dataset.mfCartId=id;b.dataset.mfCartAction=txt==='remove'?'remove':txt==='+'?'plus':'minus';b.removeAttribute('onclick');b.type='button';b.style.touchAction='manipulation'});
+ }
+ function hide(){const b=$('mfCartCleanButton');if(b)b.style.display='none';document.querySelectorAll('#mfCartV2Button,#mfCartV3Button').forEach(x=>x.remove())}
+ function show(){const b=$('mfCartCleanButton');if(b)b.style.display='inline-flex'}
+ function close(){const c=$('cart');if(c)c.classList.remove('mf-cart-clean-open','open');document.body.style.overflow=''}
+ function badge(){const n=count(),b=$('mfCartCleanBadge'),c=$('mfCartCleanCount');if(b)b.textContent=String(n);if(c)c.textContent=`${n} ${n===1?'ITEM':'ITEMS'}`;if(!n)close()}
+ function sync(){if(connected())show();else{close();hide()}badge()}
  function install(){
-  const cartEl=$('cart'),items=$('cartItems'),header=$('.header-actions');
-  if(!cartEl||!items||!header||typeof window.renderCart!=='function')return false;
-  if($('mfCartCleanButton'))return true;
-  $('mfCartV2Button')?.remove();$('mfCartV3Button')?.remove();cartEl.classList.remove('mf-cart-v2','mf-cart-v3','open');
-  const style=document.createElement('style');style.id='mf-cart-clean-css';style.textContent=`
-   #cart.mf-cart-clean{position:fixed;inset:0;width:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#08090c;z-index:100;overflow:hidden;display:none}
-   #cart.mf-cart-clean.mf-cart-clean-open{display:flex;flex-direction:column}
-   #cart.mf-cart-clean .mf-clean-head{display:flex;align-items:center;justify-content:space-between;padding:15px 5%;border-bottom:1px solid var(--line);background:#08090cf7;backdrop-filter:blur(14px);flex:0 0 auto}
-   #cart.mf-cart-clean .mf-clean-scroll{width:min(760px,100%);margin:0 auto;padding:22px 5% 100px;overflow-y:auto;flex:1}
-   #cart.mf-cart-clean .mf-clean-scroll>.topline{display:none}
-   #cart.mf-cart-clean .mf-clean-scroll #cartItems{margin:0}
-   #cart.mf-cart-clean .qty button{min-width:42px;min-height:40px;font-size:16px;touch-action:manipulation}
-   #cart.mf-cart-clean .qty .remove{min-width:auto;padding:7px 10px;color:#ff7373}
-   #mfCartCleanButton{display:inline-flex;align-items:center;gap:3px}
-   #mfCartCleanBadge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#08090c;color:var(--accent);font-size:11px;font-weight:950}
-   @media(max-width:620px){#cart.mf-cart-clean .mf-clean-head{padding:13px 4%}#cart.mf-cart-clean .mf-clean-scroll{padding:18px 4% 90px}}
-  `;document.head.appendChild(style);
-  const scroll=document.createElement('div');scroll.className='mf-clean-scroll';while(cartEl.firstChild)scroll.appendChild(cartEl.firstChild);
-  const head=document.createElement('div');head.className='mf-clean-head';head.innerHTML='<div><h2 style="margin:0">Your Cart</h2><div class="muted" style="font-size:11px;margin-top:3px" id="mfCartCleanCount">0 ITEMS</div></div><button type="button" class="close-x" id="mfCartCleanClose">×</button>';
-  cartEl.append(head,scroll);cartEl.classList.add('mf-cart-clean');
-  const oldClose=scroll.querySelector('.topline .close-x');if(oldClose)oldClose.remove();$('mfCartCleanClose').addEventListener('click',e=>{e.preventDefault();closeCart()});
-  const button=document.createElement('button');button.id='mfCartCleanButton';button.className='secondary';button.type='button';button.innerHTML='CART <span id="mfCartCleanBadge">0</span>';button.addEventListener('click',e=>{e.preventDefault();if(!connected())return syncWallet();cartEl.classList.add('mf-cart-clean-open');document.body.style.overflow='hidden';updateBadge();prepareControls()});header.insertBefore(button,header.firstChild);
-  items.addEventListener('click',e=>{const btn=e.target.closest('.qty button');if(!btn||!items.contains(btn))return;const id=btn.dataset.mfCartId||extractId(btn),action=btn.dataset.mfCartAction||'';if(!id||!action)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(action==='plus'&&typeof window.changeQty==='function')window.changeQty(id,1);if(action==='minus'&&typeof window.changeQty==='function')window.changeQty(id,-1);if(action==='remove'&&typeof window.removeItem==='function')window.removeItem(id);setTimeout(()=>{prepareControls();updateBadge()},30)},true);
-  const baseRender=window.renderCart;if(!baseRender.__mfClean){const wrapped=function(){const r=baseRender.apply(this,arguments);setTimeout(()=>{prepareControls();updateBadge()},0);return r};wrapped.__mfClean=true;window.renderCart=wrapped}
-  const baseAdd=window.addToCart;if(typeof baseAdd==='function'&&!baseAdd.__mfClean){const wrapped=function(id){if(!connected()){syncWallet();alert('Connect your wallet before adding items to your cart.');return}const r=baseAdd.apply(this,arguments);setTimeout(()=>{prepareControls();updateBadge();cartEl.classList.add('mf-cart-clean-open');document.body.style.overflow='hidden'},50);return r};wrapped.__mfClean=true;window.addToCart=wrapped}
-  const db=$('disconnectBtn');if(db&&!db.dataset.mfCleanBound){db.dataset.mfCleanBound='1';db.addEventListener('click',()=>setTimeout(()=>{clearCartState();closeCart();syncWallet()},150),true)}
-  const label=$('walletLabel');if(label)new MutationObserver(()=>syncWallet()).observe(label,{childList:true,characterData:true,subtree:true});
-  const cb=$('connectBtn');if(cb)new MutationObserver(()=>syncWallet()).observe(cb,{attributes:true,childList:true,characterData:true,subtree:true});
-  prepareControls();syncWallet();updateBadge();return true;
+  const cart=$('cart'),items=$('cartItems'),header=document.querySelector('.header-actions');if(!cart||!items||!header)return false;
+  if(!$('mfCartCleanButton')){
+   const s=document.createElement('style');s.id='mf-cart-v5-css';s.textContent=`#cart.mf-cart-clean{position:fixed;inset:0;width:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#08090c;z-index:100;overflow:hidden;display:none}#cart.mf-cart-clean.mf-cart-clean-open{display:flex;flex-direction:column}#cart.mf-cart-clean .mf-clean-head{display:flex;align-items:center;justify-content:space-between;padding:15px 5%;border-bottom:1px solid var(--line);background:#08090cf7;backdrop-filter:blur(14px)}#cart.mf-cart-clean .mf-clean-scroll{width:min(760px,100%);margin:0 auto;padding:22px 5% 100px;overflow-y:auto;flex:1}#cart.mf-cart-clean .mf-clean-scroll>.topline{display:none}#cart.mf-cart-clean .qty button{min-width:42px;min-height:40px;font-size:16px;touch-action:manipulation}#cart.mf-cart-clean .qty .remove{min-width:auto;padding:7px 10px;color:#ff7373}#mfCartCleanButton{display:inline-flex;align-items:center;gap:3px}#mfCartCleanBadge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#08090c;color:var(--accent);font-size:11px;font-weight:950}`;document.head.appendChild(s);
+   const scroll=document.createElement('div');scroll.className='mf-clean-scroll';while(cart.firstChild)scroll.appendChild(cart.firstChild);
+   const head=document.createElement('div');head.className='mf-clean-head';head.innerHTML='<div><h2 style="margin:0">Your Cart</h2><div class="muted" style="font-size:11px;margin-top:3px" id="mfCartCleanCount">0 ITEMS</div></div><button type="button" class="close-x" id="mfCartCleanClose">×</button>';
+   cart.append(head,scroll);cart.classList.add('mf-cart-clean');$('mfCartCleanClose').onclick=e=>{e.preventDefault();close()};
+   const b=document.createElement('button');b.id='mfCartCleanButton';b.className='secondary';b.type='button';b.innerHTML='CART <span id="mfCartCleanBadge">0</span>';b.onclick=e=>{e.preventDefault();if(!connected()){sync();alert('Connect your wallet before using the cart.');return}cart.classList.add('mf-cart-clean-open');document.body.style.overflow='hidden';prepare();badge()};header.insertBefore(b,header.firstChild);
+  }
+  /* Hard capture: disconnected buyers can never trigger addToCart, even through old inline handlers. */
+  if(!document.documentElement.dataset.mfCartV5Bound){
+   document.documentElement.dataset.mfCartV5Bound='1';
+   document.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const oc=b.getAttribute('onclick')||'';
+    const isAdd=/addToCart\\s*\\(/.test(oc)||b.classList.contains('buy')||b.id==='mfDetailCart'||b.id==='mfDetailBuy';
+    if(isAdd&&!connected()){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();alert('Connect your wallet before adding items to your cart.');return false}
+   },true);
+   items.addEventListener('click',e=>{
+    const b=e.target.closest('.qty button');if(!b||!items.contains(b))return;const id=b.dataset.mfCartId||itemId(b),act=b.dataset.mfCartAction;if(!id||!act)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    if(act==='plus'){const f=fn('changeQty');if(f)f(id,1);else directQty(id,1)}
+    else if(act==='minus'){const f=fn('changeQty');if(f)f(id,-1);else directQty(id,-1)}
+    else {const f=fn('removeItem');if(f)f(id);else directRemove(id)}
+    setTimeout(()=>{prepare();badge()},80);
+   },true);
+   const db=$('disconnectBtn');if(db)db.addEventListener('click',()=>setTimeout(()=>{const a=cartRef();if(a)a.splice(0,a.length);render();sync()},200),true);
+  }
+  const r=fn('renderCart');if(r&&!r.__mfCartV5){const w=function(){const out=r.apply(this,arguments);setTimeout(()=>{prepare();badge();sync()},0);return out};w.__mfCartV5=true;window.renderCart=w}
+  const add=fn('addToCart');if(add&&!add.__mfCartV5){const w=function(){if(!connected()){sync();alert('Connect your wallet before adding items to your cart.');return}const out=add.apply(this,arguments);setTimeout(()=>{prepare();badge();cart.classList.add('mf-cart-clean-open');document.body.style.overflow='hidden'},40);return out};w.__mfCartV5=true;window.addToCart=w}
+  prepare();sync();badge();return true;
  }
  wait(install);
 })();
