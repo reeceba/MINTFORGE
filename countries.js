@@ -3,10 +3,12 @@
 // loads late. This prevents wallet sign-in from being aborted by UI renderers.
 window.renderSellerOrders=window.renderSellerOrders||function(){
   const el=document.getElementById('sellerOrders');
-  const orders=(window.sellerData&&Array.isArray(window.sellerData.orders))?window.sellerData.orders:[];
   if(!el)return true;
+  let orders=[];
+  try{const s=eval('sellerData');orders=Array.isArray(s?.orders)?s.orders:[]}catch(e){}
   if(!orders.length){el.innerHTML='<div class="empty">No seller orders yet.</div>';return true;}
-  el.innerHTML=orders.map(o=>`<div class="list-card"><div class="section-head"><div><h3>Order ${String(o.id||'').slice(0,8).toUpperCase()}</h3><div class="order-meta">${String(o.shipping_name||'Customer')} • ${String(o.shipping_city||'')} ${String(o.shipping_state||'')}</div></div><span class="pill ${String(o.fulfilment_status||'').toLowerCase()}">${String(o.fulfilment_status||'Unfulfilled')}</span></div><div class="order-items">${(o.items||[]).map(i=>`${String(i.product_name||'Product')} × ${Number(i.quantity||0)}`).join('<br>')}</div><div class="product-actions"><button class="secondary" type="button" onclick="openSellerOrder('${String(o.id||'')}')">VIEW ORDER</button></div></div>`).join('');
+  const esc=window.escapeHtml||((v)=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  el.innerHTML=orders.map(o=>`<div class="list-card"><div class="section-head"><div><h3>Order ${esc(String(o.id||'').slice(0,8).toUpperCase())}</h3><div class="order-meta">${esc(o.shipping_name||'Customer')} • ${esc(o.shipping_city||'')} ${esc(o.shipping_state||'')}</div></div><span class="pill">${esc(o.fulfilment_status||'Unfulfilled')}</span></div><div class="order-items">${(o.items||[]).map(i=>`${esc(i.product_name||'Product')} × ${Number(i.quantity||0)}`).join('<br>')}</div><div class="product-actions"><button class="secondary" type="button" onclick="openSellerOrder('${esc(o.id||'')}')">VIEW ORDER</button></div></div>`).join('');
   return true;
 };
 window.renderBuyerOrders=window.renderBuyerOrders||function(){
