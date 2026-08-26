@@ -1,1 +1,2 @@
-Worldwide country selector deployment trigger.
+MINTFORGE core cleanup deployed 2026-08-27T00:00Z
+Old cart enhancement layers removed from runtime.
