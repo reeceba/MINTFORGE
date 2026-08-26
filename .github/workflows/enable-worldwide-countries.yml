@@ -1,0 +1,65 @@
+name: Enable worldwide country selectors
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install worldwide country selector
+        shell: python
+        run: |
+          from pathlib import Path
+
+          script = '<script src="./countries.js"></script>'
+
+          for filename in ["index.html", "account.html"]:
+              p = Path(filename)
+              if not p.exists():
+                  continue
+              text = p.read_text(encoding="utf-8")
+              if "countries.js" not in text:
+                  marker = "</body>"
+                  if marker in text:
+                      text = text.replace(marker, script + marker, 1)
+                  else:
+                      text += script
+              text = text.replace(
+                  '<select id="shipCountry"><option>Australia</option></select>',
+                  '<select id="shipCountry"><option value="">Select country</option></select>'
+              )
+              text = text.replace(
+                  '<select id="profileCountry"><option>Australia</option></select>',
+                  '<select id="profileCountry"><option value="">Select country</option></select>'
+              )
+              text = text.replace(
+                  '<select id="profileCountry" class="select"><option>Australia</option></select>',
+                  '<select id="profileCountry" class="select"><option value="">Select country</option></select>'
+              )
+              text = text.replace('maxlength="4"', 'maxlength="20"')
+              text = text.replace('>STATE</label>', '>STATE / PROVINCE / REGION</label>')
+              text = text.replace('>POSTCODE</label>', '>POSTAL / ZIP CODE</label>')
+              p.write_text(text, encoding="utf-8")
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          git add countries.js index.html account.html 2>/dev/null || true
+          git status --short
+          if git diff --cached --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "MINTFORGE Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Fix worldwide country selectors"
+          git push
