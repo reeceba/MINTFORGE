@@ -35,7 +35,7 @@
  function close(){const c=$('cart');if(c)c.classList.remove('mf-cart-clean-open','open');document.body.style.overflow=''}
  function clearCart(){
   const a=cartRef();
-  if(a){a.splice(0,a.length);render();return true}
+  if(a&&a.length){a.splice(0,a.length);render();return true}
   return false;
  }
  function badge(){const n=count(),b=$('mfCartCleanBadge'),c=$('mfCartCleanCount');if(b)b.textContent=String(n);if(c)c.textContent=`${n} ${n===1?'ITEM':'ITEMS'}`;if(!n)close()}
