@@ -6,12 +6,18 @@
   const DELETE_FN='https://zezusfnbqvijldhxoejd.supabase.co/functions/v1/delete-product';
   const esc=window.mfEsc||window.escapeHtml||((v)=>String(v??''));
   const wait=(fn,tries=120)=>{let n=0;const t=setInterval(()=>{try{if(fn()||++n>=tries)clearInterval(t)}catch(e){}},100)};
+  function activeSession(){
+    if(window.sessionToken)return window.sessionToken;
+    const keys=['mintforge_account_session','mintforge_session','mintforge_session_token','session_token'];
+    for(const k of keys){const v=sessionStorage.getItem(k)||localStorage.getItem(k);if(v)return v}
+    return '';
+  }
   async function removeListing(id,name){
     if(!id)return;
     const label=String(name||'this listing');
     if(!confirm(`Remove “${label}” from your store?\n\nThis permanently deletes the listing if it has no order history.`))return;
     try{
-      const token=window.sessionToken;
+      const token=activeSession();
       if(!token)throw Error('Wallet session required. Please reconnect.');
       const r=await fetch(DELETE_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_token:token,product_id:id})});
       const d=await r.json().catch(()=>({}));
