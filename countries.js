@@ -1,59 +1,9 @@
-// MINTFORGE CORE COMPATIBILITY LAYER
-// This file is intentionally small and deterministic.
-// Old cart/listing enhancement layers are no longer loaded here.
-
+// MINTFORGE country data only. No cart, wallet, shipping, or compatibility logic lives here.
 (function(){
-  const esc=v=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
-
-  // Fix the missing renderer that was aborting wallet sign-in after a
-  // successful wallet connection.
-  window.renderSellerOrders=function(){
-    const el=document.getElementById('sellerOrders');
-    if(!el)return true;
-    const orders=Array.isArray(window.sellerData?.orders)?window.sellerData.orders:(typeof sellerData!=='undefined'&&Array.isArray(sellerData.orders)?sellerData.orders:[]);
-    if(!orders.length){el.innerHTML='<div class="empty">No seller orders yet.</div>';return true;}
-    el.innerHTML=orders.map(o=>{
-      const id=String(o.id||'');
-      const items=Array.isArray(o.items)?o.items:[];
-      return `<div class="list-card"><div class="section-head"><div><h3>Order ${esc(id.slice(0,8).toUpperCase())}</h3><div class="order-meta">${esc(o.shipping_name||'Customer')} • ${esc(o.shipping_city||'')} ${esc(o.shipping_state||'')}</div></div><span class="pill">${esc(o.fulfilment_status||'Unfulfilled')}</span></div><div class="order-items">${items.map(i=>`${esc(i.product_name||'Product')} × ${Number(i.quantity||0)}`).join('<br>')}</div><div class="product-actions"><button class="secondary" type="button" data-order-id="${esc(id)}">VIEW ORDER</button></div></div>`;
-    }).join('');
-    el.querySelectorAll('[data-order-id]').forEach(btn=>btn.addEventListener('click',()=>window.openSellerOrder(btn.dataset.orderId)));
-    return true;
-  };
-
-  window.renderBuyerOrders=window.renderBuyerOrders||function(){
-    const el=document.getElementById('buyerOrders');
-    if(el&&!el.innerHTML.trim())el.innerHTML='<div class="empty">No orders yet. Your purchases will appear here.</div>';
-    return true;
-  };
-
-  // The cart belongs to the connected wallet only.
-  // Disconnecting clears it completely so no stale cart can follow a wallet.
-  window.mfCartOnDisconnect=function(){
-    try{ cart=[]; renderCart(); }catch(e){}
-    try{ closeCart(); }catch(e){
-      const el=document.getElementById('cart');
-      if(el)el.classList.remove('open');
-    }
-  };
-
-  window.mfCartSync=function(){
-    try{
-      if(typeof wallet==='undefined'||!wallet){ window.mfCartOnDisconnect(); return; }
-      renderCart();
-    }catch(e){}
-  };
-
-  // Populate country selectors without loading another enhancement system.
-  const countries=[
-    ['AU','Australia'],['NZ','New Zealand'],['US','United States'],['CA','Canada'],['GB','United Kingdom'],['IE','Ireland'],['FR','France'],['DE','Germany'],['ES','Spain'],['IT','Italy'],['NL','Netherlands'],['BE','Belgium'],['AT','Austria'],['CH','Switzerland'],['SE','Sweden'],['NO','Norway'],['DK','Denmark'],['FI','Finland'],['PT','Portugal'],['PL','Poland'],['CZ','Czechia'],['GR','Greece'],['HU','Hungary'],['RO','Romania'],['UA','Ukraine'],['TR','Türkiye'],['JP','Japan'],['KR','South Korea'],['SG','Singapore'],['HK','Hong Kong'],['CN','China'],['TW','Taiwan'],['IN','India'],['ID','Indonesia'],['MY','Malaysia'],['TH','Thailand'],['VN','Vietnam'],['PH','Philippines'],['AE','United Arab Emirates'],['SA','Saudi Arabia'],['IL','Israel'],['ZA','South Africa'],['BR','Brazil'],['MX','Mexico'],['AR','Argentina'],['CL','Chile'],['CO','Colombia'],['PE','Peru']
-  ];
-  function fillCountries(){
-    document.querySelectorAll('#shipCountry,#profileCountry').forEach(sel=>{
-      if(sel.options.length>1)return;
-      countries.forEach(([code,name])=>{const o=document.createElement('option');o.value=code;o.textContent=name;sel.appendChild(o)});
-      if(!sel.value)sel.value='AU';
-    });
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fillCountries);else fillCountries();
+const countries=[
+['AF','Afghanistan'],['AL','Albania'],['DZ','Algeria'],['AD','Andorra'],['AO','Angola'],['AG','Antigua and Barbuda'],['AR','Argentina'],['AM','Armenia'],['AU','Australia'],['AT','Austria'],['AZ','Azerbaijan'],['BS','Bahamas'],['BH','Bahrain'],['BD','Bangladesh'],['BB','Barbados'],['BY','Belarus'],['BE','Belgium'],['BZ','Belize'],['BJ','Benin'],['BT','Bhutan'],['BO','Bolivia'],['BA','Bosnia and Herzegovina'],['BW','Botswana'],['BR','Brazil'],['BN','Brunei'],['BG','Bulgaria'],['BF','Burkina Faso'],['BI','Burundi'],['CV','Cabo Verde'],['KH','Cambodia'],['CM','Cameroon'],['CA','Canada'],['CF','Central African Republic'],['TD','Chad'],['CL','Chile'],['CN','China'],['CO','Colombia'],['KM','Comoros'],['CG','Congo'],['CD','Congo, Democratic Republic of the'],['CR','Costa Rica'],['CI','Côte d’Ivoire'],['HR','Croatia'],['CU','Cuba'],['CY','Cyprus'],['CZ','Czechia'],['DK','Denmark'],['DJ','Djibouti'],['DM','Dominica'],['DO','Dominican Republic'],['EC','Ecuador'],['EG','Egypt'],['SV','El Salvador'],['GQ','Equatorial Guinea'],['ER','Eritrea'],['EE','Estonia'],['SZ','Eswatini'],['ET','Ethiopia'],['FJ','Fiji'],['FI','Finland'],['FR','France'],['GA','Gabon'],['GM','Gambia'],['GE','Georgia'],['DE','Germany'],['GH','Ghana'],['GR','Greece'],['GD','Grenada'],['GT','Guatemala'],['GN','Guinea'],['GW','Guinea-Bissau'],['GY','Guyana'],['HT','Haiti'],['HN','Honduras'],['HU','Hungary'],['IS','Iceland'],['IN','India'],['ID','Indonesia'],['IR','Iran'],['IQ','Iraq'],['IE','Ireland'],['IL','Israel'],['IT','Italy'],['JM','Jamaica'],['JP','Japan'],['JO','Jordan'],['KZ','Kazakhstan'],['KE','Kenya'],['KI','Kiribati'],['KP','Korea, North'],['KR','Korea, South'],['KW','Kuwait'],['KG','Kyrgyzstan'],['LA','Laos'],['LV','Latvia'],['LB','Lebanon'],['LS','Lesotho'],['LR','Liberia'],['LY','Libya'],['LI','Liechtenstein'],['LT','Lithuania'],['LU','Luxembourg'],['MG','Madagascar'],['MW','Malawi'],['MY','Malaysia'],['MV','Maldives'],['ML','Mali'],['MT','Malta'],['MH','Marshall Islands'],['MR','Mauritania'],['MU','Mauritius'],['MX','Mexico'],['FM','Micronesia'],['MD','Moldova'],['MC','Monaco'],['MN','Mongolia'],['ME','Montenegro'],['MA','Morocco'],['MZ','Mozambique'],['MM','Myanmar'],['NA','Namibia'],['NR','Nauru'],['NP','Nepal'],['NL','Netherlands'],['NZ','New Zealand'],['NI','Nicaragua'],['NE','Niger'],['NG','Nigeria'],['MK','North Macedonia'],['NO','Norway'],['OM','Oman'],['PK','Pakistan'],['PW','Palau'],['PS','Palestine'],['PA','Panama'],['PG','Papua New Guinea'],['PY','Paraguay'],['PE','Peru'],['PH','Philippines'],['PL','Poland'],['PT','Portugal'],['QA','Qatar'],['RO','Romania'],['RU','Russia'],['RW','Rwanda'],['KN','Saint Kitts and Nevis'],['LC','Saint Lucia'],['VC','Saint Vincent and the Grenadines'],['WS','Samoa'],['SM','San Marino'],['ST','Sao Tome and Principe'],['SA','Saudi Arabia'],['SN','Senegal'],['RS','Serbia'],['SC','Seychelles'],['SL','Sierra Leone'],['SG','Singapore'],['SK','Slovakia'],['SI','Slovenia'],['SB','Solomon Islands'],['SO','Somalia'],['ZA','South Africa'],['SS','South Sudan'],['ES','Spain'],['LK','Sri Lanka'],['SD','Sudan'],['SR','Suriname'],['SE','Sweden'],['CH','Switzerland'],['SY','Syria'],['TW','Taiwan'],['TJ','Tajikistan'],['TZ','Tanzania'],['TH','Thailand'],['TL','Timor-Leste'],['TG','Togo'],['TO','Tonga'],['TT','Trinidad and Tobago'],['TN','Tunisia'],['TR','Türkiye'],['TM','Turkmenistan'],['TV','Tuvalu'],['UG','Uganda'],['UA','Ukraine'],['AE','United Arab Emirates'],['GB','United Kingdom'],['US','United States'],['UY','Uruguay'],['UZ','Uzbekistan'],['VU','Vanuatu'],['VA','Vatican City'],['VE','Venezuela'],['VN','Vietnam'],['YE','Yemen'],['ZM','Zambia'],['ZW','Zimbabwe']
+];
+function fill(){document.querySelectorAll('#shipCountry,#profileCountry').forEach(sel=>{if(sel.options.length>1)return;countries.forEach(([code,name])=>{const o=document.createElement('option');o.value=code;o.textContent=name;sel.appendChild(o)});if(!sel.value)sel.value='AU';});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fill);else fill();
+window.MINTFORGE_COUNTRIES=countries;
 })();
