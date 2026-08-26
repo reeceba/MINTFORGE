@@ -4,7 +4,7 @@
 */
 (()=>{
  const wait=(fn,tries=200)=>{let n=0;const t=setInterval(()=>{try{if(fn()||++n>=tries)clearInterval(t)}catch(e){}},100)};
- const esc=window.escapeHtml||((v)=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])));
+ const esc=window.escapeHtml||((v)=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[m])));
  const $=id=>document.getElementById(id);
  let originalRender=null, query='', category='ALL', sort='featured', buyerProducts=[];
  const PUBLIC_FN='https://zezusfnbqvijldhxoejd.supabase.co/functions/v1/storefront-public';
@@ -72,4 +72,39 @@
  function ensureDetail(){if($('mfBuyerDetail'))return;const m=document.createElement('div');m.className='modal';m.id='mfBuyerDetail';m.innerHTML=`<div class="modal-card mf-detail"><div class="topline"><div><div class="eyebrow">PRODUCT</div><span id="mfDetailCat" class="muted"></span></div><button class="close-x" id="mfDetailClose">×</button></div><div class="mf-detail-grid"><div class="mf-detail-img" id="mfDetailImage"></div><div class="mf-detail-copy"><h2 id="mfDetailName">Product</h2><div class="mf-detail-price" id="mfDetailPrice">$0.00 AUD</div><div class="mf-detail-meta" id="mfDetailMeta"></div><p class="mf-detail-desc" id="mfDetailDesc"></p><div class="mf-detail-buy"><button class="secondary" id="mfDetailCart">ADD TO CART</button><button class="primary" id="mfDetailBuy">BUY NOW</button></div><div class="status" id="mfDetailStatus"></div></div></div></div>`;document.body.appendChild(m);$('mfDetailClose').onclick=()=>m.classList.remove('open')}
  function openDetail(p){ensureDetail();const m=$('mfBuyerDetail'),src=productImage(p);$('mfDetailCat').textContent=p.category||'3D PRINT';$('mfDetailName').textContent=p.name||'Product';$('mfDetailPrice').textContent=`$${Number(p.price||0).toFixed(2)} AUD`;$('mfDetailDesc').textContent=p.description||'';$('mfDetailMeta').innerHTML=`<span>${Number(p.stock||0)} in stock</span><span>${esc(shippingText(p))}</span>${p.processing_days_min!=null?`<span>Ships in ${p.processing_days_min}${p.processing_days_max&&p.processing_days_max!==p.processing_days_min?`–${p.processing_days_max}`:''} days</span>`:''}`;const box=$('mfDetailImage');box.innerHTML=src?`<img src="${esc(src)}" alt="${esc(p.name||'Product')}" loading="eager">`:`<div class="mf-placeholder">🧪</div>`;$('mfDetailCart').onclick=()=>{if(typeof addToCart==='function'){addToCart(p.id);$('mfDetailStatus').innerHTML='<span class="success">Added to cart ✓</span>'}};$('mfDetailBuy').onclick=()=>{if(typeof addToCart==='function'){addToCart(p.id);m.classList.remove('open');$('cart')?.classList.add('open')}};m.classList.add('open')}
  function start(){injectCSS();ensureDetail();loadBuyerProducts();return patchRender()}wait(start);
+})();
+
+/* MINTFORGE CART CONTROLS — delegated capture handler
+   This is intentionally attached at document level so it survives every
+   cart re-render and works reliably inside mobile wallet browsers.
+*/
+(()=>{
+ const wait=(fn,tries=200)=>{let n=0;const t=setInterval(()=>{try{if(fn()||++n>=tries)clearInterval(t)}catch(e){}},100)};
+ function bind(){
+  if(typeof window.changeQty!=='function'||typeof window.removeItem!=='function'||!document.getElementById('cartItems'))return false;
+  if(document.documentElement.dataset.mfCartDelegated)return true;
+  document.documentElement.dataset.mfCartDelegated='1';
+  document.addEventListener('click',e=>{
+   const btn=e.target.closest('#cartItems .qty button');
+   if(!btn)return;
+   const row=btn.closest('.item');
+   if(!row)return;
+   const buttons=[...row.querySelectorAll('.qty button')];
+   let id=null;
+   for(const b of buttons){
+    const oc=b.getAttribute('onclick')||'';
+    const m=oc.match(/(?:changeQty|removeItem)\(['"]([^'"]+)/);
+    if(m){id=m[1];break}
+   }
+   if(!id)return;
+   const text=(btn.textContent||'').trim().toLowerCase();
+   e.preventDefault();
+   e.stopImmediatePropagation();
+   if(text==='−'||text==='-')window.changeQty(id,-1);
+   else if(text==='+')window.changeQty(id,1);
+   else if(text==='remove')window.removeItem(id);
+  },true);
+  return true;
+ }
+ wait(bind);
 })();
