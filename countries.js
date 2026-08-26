@@ -1,2 +1,2 @@
 // MINTFORGE worldwide country/listing/variant upgrade loader
-['listing-upgrade.js','variant-shop.js','soldout-fix.js','shipping-fix.js','worldwide-final.js'].forEach(src=>{const s=document.createElement('script');s.src='./'+src+'?v=20260826';s.defer=false;document.head.appendChild(s)});
+['listing-upgrade.js','variant-shop.js','soldout-fix.js','shipping-fix.js','worldwide-final.js','simple-shipping.js'].forEach(src=>{const s=document.createElement('script');s.src='./'+src+'?v=20260826-2';s.defer=false;document.head.appendChild(s)});
