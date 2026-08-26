@@ -23,30 +23,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Pages
+
+      - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Inject MINTFORGE commerce engines
-        shell: python
-        run: |
-          from pathlib import Path
-          for name in ("index.html", "account.html"):
-              p = Path(name)
-              if not p.exists():
-                  continue
-              s = p.read_text(encoding="utf-8")
-              tags = [
-                  '<script src="countries.js"></script><script src="shipping-engine.js"></script>',
-                  '<script src="listing-entry-fix.js"></script>'
-              ]
-              if "shipping-engine.js" not in s:
-                  s = s.replace("</body>", tags[0] + "</body>")
-              if "listing-entry-fix.js" not in s:
-                  s = s.replace("</body>", tags[1] + "</body>")
-              p.write_text(s, encoding="utf-8")
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
