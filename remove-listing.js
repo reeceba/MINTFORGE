@@ -7,7 +7,16 @@
   const esc=window.mfEsc||window.escapeHtml||((v)=>String(v??''));
   const wait=(fn,tries=120)=>{let n=0;const t=setInterval(()=>{try{if(fn()||++n>=tries)clearInterval(t)}catch(e){}},100)};
   function activeSession(){
+    // index.html keeps the authenticated token in a lexical variable, not window.sessionToken.
+    // The persistent copy is stored per wallet as mf_session_<wallet>.
     if(window.sessionToken)return window.sessionToken;
+    const walletEl=document.getElementById('accountWallet');
+    const wallet=String(walletEl?.textContent||'').trim();
+    if(wallet && wallet!=='—'){
+      const v=localStorage.getItem('mf_session_'+wallet);
+      if(v)return v;
+    }
+    // Fallbacks for older builds.
     const keys=['mintforge_account_session','mintforge_session','mintforge_session_token','session_token'];
     for(const k of keys){const v=sessionStorage.getItem(k)||localStorage.getItem(k);if(v)return v}
     return '';
