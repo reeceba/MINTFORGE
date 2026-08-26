@@ -24,7 +24,7 @@
  function directRemove(id){const a=cartRef(),i=find(id);if(!a||i<0)return false;a.splice(i,1);render();return true}
  function itemId(btn){
   if(btn.dataset.mfCartId)return btn.dataset.mfCartId;
-  const read=s=>{const m=String(s||'').match(/(?:changeQty|removeItem)\\(\\s*['\"]([^'\"]+)['\"]/);return m?.[1]||''};
+  const read=s=>{const m=String(s||'').match(/(?:changeQty|removeItem)\(\s*['\"]([^'\"]+)['\"]/);return m?.[1]||''};
   return read(btn.getAttribute('onclick'))||read(btn.closest('.item')?.querySelector('[onclick*="changeQty"],[onclick*="removeItem"]')?.getAttribute('onclick'));
  }
  function prepare(){
@@ -45,13 +45,12 @@
    cart.append(head,scroll);cart.classList.add('mf-cart-clean');$('mfCartCleanClose').onclick=e=>{e.preventDefault();close()};
    const b=document.createElement('button');b.id='mfCartCleanButton';b.className='secondary';b.type='button';b.innerHTML='CART <span id="mfCartCleanBadge">0</span>';b.onclick=e=>{e.preventDefault();if(!connected()){sync();alert('Connect your wallet before using the cart.');return}cart.classList.add('mf-cart-clean-open');document.body.style.overflow='hidden';prepare();badge()};header.insertBefore(b,header.firstChild);
   }
-  /* Hard capture: disconnected buyers can never trigger addToCart, even through old inline handlers. */
   if(!document.documentElement.dataset.mfCartV5Bound){
    document.documentElement.dataset.mfCartV5Bound='1';
    document.addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;
     const oc=b.getAttribute('onclick')||'';
-    const isAdd=/addToCart\\s*\\(/.test(oc)||b.classList.contains('buy')||b.id==='mfDetailCart'||b.id==='mfDetailBuy';
+    const isAdd=/addToCart\s*\(/.test(oc)||b.classList.contains('buy')||b.id==='mfDetailCart'||b.id==='mfDetailBuy';
     if(isAdd&&!connected()){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();alert('Connect your wallet before adding items to your cart.');return false}
    },true);
    items.addEventListener('click',e=>{
