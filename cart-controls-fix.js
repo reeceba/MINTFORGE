@@ -1,70 +1,63 @@
-/* MINTFORGE CART CONTROLS — HARDENED
-   The cart itself lives in index.html, so this patch deliberately does not
-   depend on fragile inline onclick handlers. It decorates each cart button
-   with a stable product id and handles touch/click events at document level.
+/* MINTFORGE CART CONTROLS — DIRECT DOM FIX
+   The original cart is rendered with inline onclick attributes. Previous delegated
+   patches were too fragile in wallet/mobile browsers. This version replaces the
+   generated cart buttons with direct DOM handlers every time the cart renders.
 */
 (()=>{
-  const boot=()=>{
-    if(document.documentElement.dataset.mfCartHardFix==='1') return true;
+  const getId=(btn)=>{
+    const oc=btn.getAttribute('onclick')||'';
+    const m=oc.match(/(?:changeQty|removeItem)\(['\"]([^'\"]+)['\"]/);
+    return m?m[1]:null;
+  };
+  const install=()=>{
     const root=document.getElementById('cartItems');
-    if(!root || typeof window.changeQty!=='function' || typeof window.removeItem!=='function') return false;
+    if(!root)return false;
+    const buttons=root.querySelectorAll('.item .qty button');
+    buttons.forEach(btn=>{
+      if(btn.dataset.mfDirectCart==='1')return;
+      const id=getId(btn);
+      if(!id)return;
+      const text=(btn.textContent||'').trim().toLowerCase();
+      let action=text==='remove'?'remove':(text==='+'?'plus':(text==='−'||text==='-'?'minus':null));
+      if(!action)return;
+      btn.dataset.mfDirectCart='1';
+      btn.dataset.mfCartId=id;
+      btn.dataset.mfCartAction=action;
+      btn.removeAttribute('onclick');
+      btn.onclick=(ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        try{
+          if(action==='remove'){
+            if(typeof window.removeItem==='function') window.removeItem(id);
+          }else if(typeof window.changeQty==='function'){
+            window.changeQty(id,action==='plus'?1:-1);
+          }
+        }catch(err){console.error('MINTFORGE cart control failed',err);}
+        return false;
+      };
+      btn.addEventListener('touchend',ev=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        btn.click();
+      },{passive:false});
+    });
+    return true;
+  };
 
-    document.documentElement.dataset.mfCartHardFix='1';
-
-    const decorate=()=>{
-      const items=root.querySelectorAll('.item');
-      items.forEach(row=>{
-        const qty=row.querySelector('.qty');
-        if(!qty)return;
-        const controls=[...qty.querySelectorAll('button')];
-        let id=null;
-        for(const b of controls){
-          const oc=b.getAttribute('onclick')||'';
-          const m=oc.match(/(?:changeQty|removeItem)\(['\"]([^'\"]+)['\"]/);
-          if(m){id=m[1];break;}
-        }
-        if(!id)return;
-        controls.forEach(b=>{
-          const text=(b.textContent||'').trim();
-          if(text==='−'||text==='-' ) b.dataset.mfCartAction='minus';
-          else if(text==='+') b.dataset.mfCartAction='plus';
-          else if(text.toLowerCase()==='remove') b.dataset.mfCartAction='remove';
-          b.dataset.mfProductId=id;
-          // Remove the inline handler so there is exactly one execution path.
-          b.removeAttribute('onclick');
-        });
-      });
-    };
-
-    // Observe every cart re-render and decorate the newly-created buttons.
-    new MutationObserver(decorate).observe(root,{childList:true,subtree:true});
-    decorate();
-
-    const handle=(e)=>{
-      const btn=e.target.closest?.('#cartItems button[data-mf-cart-action]');
-      if(!btn)return;
-      const id=btn.dataset.mfProductId;
-      const action=btn.dataset.mfCartAction;
-      if(!id||!action)return;
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      try{
-        if(action==='minus') window.changeQty(id,-1);
-        else if(action==='plus') window.changeQty(id,1);
-        else if(action==='remove') window.removeItem(id);
-      }catch(err){console.error('MINTFORGE cart control error',err);}
-    };
-
-    // Capture phase handles taps before wallet/browser click quirks can interfere.
-    document.addEventListener('click',handle,true);
-    document.addEventListener('pointerup',handle,true);
-    document.addEventListener('touchend',handle,true);
+  const rootReady=()=>{
+    const root=document.getElementById('cartItems');
+    if(!root)return false;
+    if(!root.dataset.mfObserver){
+      root.dataset.mfObserver='1';
+      new MutationObserver(()=>install()).observe(root,{childList:true,subtree:true});
+    }
+    install();
     return true;
   };
 
   let tries=0;
   const timer=setInterval(()=>{
-    if(boot()||++tries>300) clearInterval(timer);
+    if(rootReady()||++tries>300)clearInterval(timer);
   },100);
 })();
