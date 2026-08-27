@@ -1,2 +1,2 @@
 MINTFORGE core cleanup deployed 2026-08-27T00:00Z
-Old cart enhancement layers removed from runtime.
+Phone image upload patch trigger 2026-08-27T02:30Z
