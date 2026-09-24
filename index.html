@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#08090c">
-<title>MINTFORGE — Solana Commerce</title>
+<meta name="theme-color" content="#7A4DFF">
+<title>Bopp — Buy. Sell. Find.</title>
 <style>
 :root{--bg:#08090c;--card:#111318;--card2:#0b0d11;--line:#252932;--text:#f6f7fb;--muted:#9298a5;--accent:#9dff00;--danger:#ff7373;--blue:#78a9ff;--warn:#ffd166}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}button{border:0;border-radius:12px;padding:11px 15px;font-weight:850;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.primary,.connect,.pay{background:var(--accent);color:#071000}.secondary{background:#20242c;color:#fff}.danger{background:#321b1b;color:#ff8a8a}.logo{font-weight:950;letter-spacing:.1em;font-size:22px}.logo span{color:var(--accent)}
@@ -14,15 +14,192 @@ header{display:flex;justify-content:space-between;align-items:center;padding:17p
 .modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:14px;z-index:50}.modal.open{display:flex}.modal-card{width:min(850px,100%);max-height:94vh;overflow:auto;background:var(--card);border:1px solid #313640;border-radius:24px;padding:25px;box-shadow:0 30px 90px #000}.small-modal{width:min(520px,100%)}.check{width:58px;height:58px;border-radius:50%;background:var(--accent);color:#071000;display:grid;place-items:center;font-size:30px;font-weight:950;margin-bottom:18px}.modal-card h2{font-size:32px;margin:0 0 7px}.order-box{margin:20px 0;padding:16px;background:var(--card2);border:1px solid var(--line);border-radius:15px}.order-box div{display:flex;justify-content:space-between;gap:15px;padding:6px 0}.modal-actions{display:flex;gap:10px;margin-top:18px}.modal-actions button{flex:1}.tabs{display:flex;gap:8px;overflow:auto;margin:20px 0 16px;padding-bottom:3px}.tab{background:#20242c;color:#fff;white-space:nowrap}.tab.active{background:var(--accent);color:#071000}.panel{display:none}.panel.active{display:block}.wallet-box{padding:13px 14px;background:var(--card2);border:1px solid var(--line);border-radius:12px;word-break:break-all;font:12px ui-monospace,monospace}.note{font-size:11px;color:var(--muted);line-height:1.5}.list{display:grid;gap:10px}.list-card{background:var(--card2);border:1px solid var(--line);border-radius:15px;padding:14px}.list-card h3{margin:0 0 7px}.pill{font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;border-radius:999px;background:#20242c}.pill.live,.pill.paid,.pill.delivered{color:var(--accent)}.pill.draft{color:var(--muted)}.pill.processing{color:var(--warn)}.pill.shipped{color:var(--blue)}.pill.cancelled{color:var(--danger)}.product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.product-card{background:var(--card2);border:1px solid var(--line);border-radius:15px;padding:14px}.product-actions{display:flex;gap:8px;margin-top:12px}.product-actions button{flex:1}.order-meta{margin-top:8px;color:var(--muted);font-size:12px}.order-items{margin-top:10px;font-size:13px}.empty{color:var(--muted);padding:12px 0;font-size:13px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.close-x{background:#20242c;color:#fff;border-radius:50%;width:40px;height:40px;padding:0;font-size:20px}.topline{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.hidden{display:none!important}.ship-choice{font-size:11px;color:var(--muted);margin-top:6px}
 @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.product-grid{grid-template-columns:1fr}}
 @media(max-width:620px){header{padding:14px 4%}.logo{font-size:19px}.wallet-mini{display:none}.connect{padding:10px}.grid{grid-template-columns:1fr}.wrap{padding:28px 4% 100px}.two{grid-template-columns:1fr}.cart{right:9px;bottom:9px;width:calc(100% - 18px)}.modal{padding:8px}.modal-card{padding:20px;border-radius:20px}.modal-card h2{font-size:27px}.modal-actions{flex-direction:column}}
+
+/* BOPP BRAND SYSTEM */
+:root{
+  --bg:#f7f5ef;
+  --card:#ffffff;
+  --card2:#f1efe8;
+  --line:#dedbd3;
+  --text:#17151d;
+  --muted:#6f6b75;
+  --accent:#C6FF3D;
+  --purple:#7A4DFF;
+  --purple-soft:#eee9ff;
+  --danger:#e5484d;
+  --blue:#5b72ff;
+  --warn:#c58a00;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,a{font:inherit}
+button{border-radius:14px}
+a{text-decoration:none;color:inherit}
+header{
+  padding:15px 5%;
+  background:rgba(247,245,239,.92);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 2px 18px rgba(23,21,29,.04);
+}
+.logo{color:var(--text);font-size:29px;letter-spacing:-.06em;font-weight:950;text-transform:lowercase}
+.logo span{color:var(--purple)}
+.site-nav{display:flex;gap:28px;align-items:center;margin-left:28px;margin-right:auto}
+.site-nav a{font-size:14px;font-weight:800;color:var(--muted)}
+.site-nav a:hover{color:var(--text)}
+.header-actions{gap:8px}
+.connect,.primary,.pay{background:var(--purple);color:#fff}
+.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+.cart-head{font-size:13px;padding:10px 13px}
+#cartCount{display:inline-grid;place-items:center;min-width:21px;height:21px;margin-left:4px;border-radius:999px;background:var(--accent);font-size:11px}
+.wrap{max-width:1240px;padding:0 5% 100px}
+.hero{
+  min-height:610px;
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+  align-items:center;
+  gap:30px;
+  padding:72px 0 58px;
+}
+.hero-copy{max-width:760px}
+.hero .eyebrow{color:var(--purple)}
+.hero h1{
+  margin:14px 0 22px;
+  font-size:clamp(58px,9vw,112px);
+  line-height:.84;
+  letter-spacing:-.065em;
+  color:var(--text);
+}
+.hero h1 span{color:var(--purple)}
+.hero-sub{max-width:650px;font-size:clamp(18px,2.2vw,24px);line-height:1.4;color:var(--muted);margin:0}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero-btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:14px 22px;font-weight:900}
+.wallet-line{margin-top:18px;font-size:12px}
+.hero-mark{
+  justify-self:end;
+  width:min(100%,360px);
+  aspect-ratio:1;
+  border-radius:48px;
+  background:var(--purple);
+  color:#fff;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  padding:32px;
+  transform:rotate(3deg);
+  box-shadow:18px 20px 0 var(--accent);
+}
+.hero-mark span{font-size:clamp(56px,8vw,96px);font-weight:950;letter-spacing:-.08em}
+.hero-mark small{font-size:54px;line-height:1;font-weight:900}
+.category-strip{
+  display:flex;align-items:center;gap:9px;overflow:auto;padding:14px 0 22px;border-bottom:1px solid var(--line);scrollbar-width:none
+}
+.category-strip::-webkit-scrollbar{display:none}
+.category-strip a,.category-label{
+  flex:0 0 auto;padding:9px 13px;border-radius:999px;font-size:12px;font-weight:850
+}
+.category-strip a{background:#fff;border:1px solid var(--line);color:var(--text)}
+.category-strip a:hover{border-color:var(--purple);color:var(--purple)}
+.category-label{padding-left:0;color:var(--muted);letter-spacing:.1em}
+.shop-section{padding-top:54px}
+.section-intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:22px}
+.section-intro h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.045em;margin:8px 0 0}
+.section-intro p{margin:0;max-width:330px;text-align:right}
+.grid{gap:18px}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:0 8px 30px rgba(23,21,29,.05);
+}
+.art{height:230px;background:var(--purple-soft);color:var(--purple)}
+.body{padding:20px}
+.body h3{font-size:21px;letter-spacing:-.02em}
+.body p{min-height:44px;line-height:1.45}
+.buy{background:var(--purple);color:#fff}
+.stock{color:var(--muted)}
+.eyebrow{color:var(--purple);font-size:10px}
+.cart{background:#fff;border-color:var(--line);box-shadow:0 24px 70px rgba(23,21,29,.18)}
+.item{border-color:var(--line)}
+.summary,.shipping{border-color:var(--line)}
+.field input,.field select,.field textarea{background:#fff;color:var(--text);border-color:var(--line)}
+.modal{background:rgba(23,21,29,.58)}
+.modal-card{background:#fff;border-color:var(--line);box-shadow:0 30px 90px rgba(23,21,29,.24)}
+.wallet-box,.order-box,.list-card,.product-card{background:var(--card2);border-color:var(--line)}
+.tab{background:#fff;color:var(--text);border:1px solid var(--line)}
+.tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.check{background:var(--accent);color:var(--text)}
+.pill{background:#fff;border:1px solid var(--line)}
+.success{color:#4d8a00}
+.danger{background:#fff0f0;color:var(--danger);border:1px solid #f2c8c8}
+@media(max-width:800px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding:54px 0 42px}
+  .hero-mark{justify-self:start;width:min(75vw,320px);margin:20px 0 15px}
+  .site-nav{display:none}
+  .section-intro{align-items:start;flex-direction:column}
+  .section-intro p{text-align:left}
+}
+@media(max-width:620px){
+  header{padding:13px 4%}
+  .logo{font-size:26px}
+  .cart-head{display:inline-flex}
+  .hero h1{font-size:clamp(58px,18vw,88px)}
+  .hero-mark{border-radius:34px;padding:24px;box-shadow:12px 14px 0 var(--accent)}
+  .hero-mark span{font-size:64px}
+  .hero-mark small{font-size:38px}
+}
+
 </style>
 </head>
 <body>
-<header><div class="logo">MINT<span>FORGE</span></div><div class="header-actions"><span class="wallet-mini" id="walletMini"></span><button class="secondary hidden" id="accountBtn">MY ACCOUNT</button><button class="connect" id="connectBtn">CONNECT WALLET</button></div></header>
-<main class="wrap"><div class="eyebrow">SOLANA • 3D PRINTS • WEB3</div><h1>PHYSICAL GOODS.<br>ON-CHAIN PAYMENTS.</h1><p class="muted">Web3-native commerce for physical collectibles.</p><p class="muted" id="walletLabel">Wallet not connected</p><div class="eyebrow" style="margin-top:28px">SHOP</div><h2>Featured products</h2><div class="grid" id="products"></div></main>
+<header>
+  <a class="logo" href="#top" aria-label="Bopp home">bopp</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="#shop">Shop</a>
+    <a href="#categories">Categories</a>
+    <a href="#sell" id="navSell">Sell</a>
+  </nav>
+  <div class="header-actions">
+    <button class="secondary cart-head" id="cartHeadBtn">Cart <span id="cartCount">0</span></button>
+    <span class="wallet-mini" id="walletMini"></span>
+    <button class="secondary hidden" id="accountBtn">MY BOPP</button>
+    <button class="connect" id="connectBtn">CONNECT WALLET</button>
+  </div>
+</header>
+<main class="wrap" id="top">
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">THE MARKETPLACE FOR STUFF</div>
+      <h1>Got stuff?<br><span>Bopp it.</span></h1>
+      <p class="hero-sub">Buy and sell physical stuff simply. Find something cool, list something you don't need, and get it done.</p>
+      <div class="hero-actions">
+        <a class="primary hero-btn" href="#shop">FIND STUFF</a>
+        <button class="secondary hero-btn" id="heroSell">SELL SOMETHING</button>
+      </div>
+      <p class="muted wallet-line" id="walletLabel">Wallet not connected</p>
+    </div>
+    <div class="hero-mark" aria-hidden="true"><span>bopp</span><small>→</small></div>
+  </section>
+
+  <section id="categories" class="category-strip" aria-label="Categories">
+    <span class="category-label">BROWSE</span>
+    <a href="#shop">All</a><a href="#shop">Fashion</a><a href="#shop">Electronics</a><a href="#shop">Gaming</a><a href="#shop">Home</a><a href="#shop">Collectibles</a><a href="#shop">Art</a><a href="#shop">Tools</a><a href="#shop">Other</a>
+  </section>
+
+  <section id="shop" class="shop-section">
+    <div class="section-intro">
+      <div>
+        <div class="eyebrow">STUFF PEOPLE ARE BOPPING</div>
+        <h2>Find your next thing.</h2>
+      </div>
+      <p class="muted">Real stuff. Real people. Simple checkout.</p>
+    </div>
+    <div class="grid" id="products"></div>
+  </section>
+</main>
 <div class="cart" id="cart"><div class="topline"><h3 style="margin:0">Your cart</h3><button class="close-x" id="closeCartBtn">×</button></div><div id="cartItems"></div><div class="summary"><div class="row"><span>Subtotal</span><b id="subtotal">$0.00 AUD</b></div><div class="row" style="margin-top:7px"><span>Shipping</span><b id="shippingTotal">$0.00 AUD</b></div><div class="row" style="margin-top:10px;font-size:18px"><b>Total</b><b id="total">$0.00 AUD</b></div></div><div class="shipping"><h4>Shipping details</h4><div class="field"><label>FULL NAME</label><input id="shipName" autocomplete="name"></div><div class="field"><label>EMAIL</label><input id="shipEmail" type="email" autocomplete="email"></div><div class="field"><label>ADDRESS LINE 1</label><input id="shipAddress" autocomplete="street-address"></div><div class="field"><label>ADDRESS LINE 2 (OPTIONAL)</label><input id="shipAddress2" autocomplete="address-line2"></div><div class="two"><div class="field"><label>CITY / SUBURB</label><input id="shipCity" autocomplete="address-level2"></div><div class="field"><label>STATE / PROVINCE / REGION</label><input id="shipState" autocomplete="address-level1"></div></div><div class="two"><div class="field"><label>POSTAL / ZIP CODE</label><input id="shipPostcode" autocomplete="postal-code"></div><div class="field"><label>COUNTRY</label><select id="shipCountry"><option value="">Select country</option></select></div></div><div class="shipnote">Seller shipping is limited to three options: Free Shipping, Flat Rate, or Worldwide Flat Rate.</div></div><button class="pay" id="checkoutBtn">CHECKOUT WITH SOL</button><div class="status" id="checkoutStatus"></div></div>
 <div class="modal" id="confirmModal"><div class="modal-card small-modal"><div class="check">✓</div><div class="eyebrow">PAYMENT VERIFIED</div><h2>Order confirmed 🎉</h2><p class="muted">Your payment has been successfully verified on Solana.</p><div class="order-box"><div><span>Order</span><strong id="confirmOrder">—</strong></div><div><span>Items</span><strong id="confirmItems">—</strong></div><div><span>Total</span><strong id="confirmTotal">—</strong></div><div><span>Shipping</span><strong id="confirmShipping">—</strong></div></div><p class="status" id="emailStatus">Confirmation email is being prepared…</p><div class="modal-actions"><button class="secondary" id="continueBtn">CONTINUE SHOPPING</button><button class="primary" id="viewOrdersBtn">VIEW MY ORDERS</button></div></div></div>
-<div class="modal" id="accountModal"><div class="modal-card"><div class="topline"><div><div class="eyebrow">WALLET ACCOUNT</div><h2 style="margin-top:4px">My MINTFORGE</h2></div><button class="close-x" id="closeAccountBtn">×</button></div><p class="muted">One wallet. Buyer, seller, or both.</p><div class="wallet-box" id="accountWallet">—</div><div class="tabs"><button class="tab active" data-tab="orders">MY ORDERS</button><button class="tab" data-tab="store">MY STORE</button><button class="tab" data-tab="profile">PROFILE</button></div><section class="panel active" id="panel-orders"><div class="section-head"><h3>Orders I've made</h3><button class="secondary" id="refreshBuyer">REFRESH</button></div><div class="list" id="buyerOrders" style="margin-top:12px"></div></section><section class="panel" id="panel-store"><div class="section-head"><div><h3>My Store</h3><p class="note">Listings created here belong to this connected wallet. Payments for those listings are sent directly to this wallet.</p></div><button class="primary" id="newListingBtn">+ NEW LISTING</button></div><div class="list" id="sellerOrders" style="margin-top:18px"></div><h3 style="margin:24px 0 12px">My Listings</h3><div class="product-grid" id="sellerProducts"></div></section><section class="panel" id="panel-profile"><h3>Saved profile</h3><p class="note">These details are stored against the connected wallet. Countries are available worldwide.</p><div class="field"><label>FULL NAME</label><input id="profileName"></div><div class="field"><label>EMAIL</label><input id="profileEmail" type="email"></div><div class="field"><label>ADDRESS LINE 1</label><input id="profileAddress"></div><div class="field"><label>ADDRESS LINE 2 (OPTIONAL)</label><input id="profileAddress2"></div><div class="two"><div class="field"><label>CITY / SUBURB</label><input id="profileCity"></div><div class="field"><label>STATE / PROVINCE / REGION</label><input id="profileState"></div></div><div class="two"><div class="field"><label>POSTAL / ZIP CODE</label><input id="profilePostcode"></div><div class="field"><label>COUNTRY</label><select id="profileCountry"><option value="">Select country</option></select></div></div><button class="primary" id="saveProfile">SAVE PROFILE</button><div class="status" id="profileStatus"></div><p class="note" style="margin-top:15px">Signing in uses a free wallet message signature. It never requests or stores your private key and does not send SOL.</p><button class="danger" style="margin-top:12px" id="disconnectBtn">DISCONNECT WALLET</button></section></div></div>
-<div class="modal" id="listingModal"><div class="modal-card"><div class="topline"><div><div class="eyebrow">SELLER</div><h2 id="listingTitle">New Listing</h2></div><button class="close-x" id="closeListingBtn">×</button></div><div class="field"><label>PRODUCT NAME</label><input id="listingName"></div><div class="field"><label>DESCRIPTION</label><textarea id="listingDescription"></textarea></div><div class="two"><div class="field"><label>PRICE (AUD)</label><input id="listingPrice" type="number" min="0" step="0.01"></div><div class="field"><label>STOCK</label><input id="listingStock" type="number" min="0" step="1"></div></div><div class="two"><div class="field"><label>CATEGORY</label><input id="listingCategory" value="3D Print"></div><div class="field"><label>SKU</label><input id="listingSku"></div></div><div class="field"><label>PRODUCT IMAGE</label><input id="listingImageFile" type="file" accept="image/*" capture="environment"><div id="listingImagePreview" class="note" style="margin-top:8px">Choose a photo from your phone.</div><input id="listingImage" type="hidden"></div><div class="field"><label>SHIPPING OPTION</label><select id="listingShippingMode"><option value="free">FREE SHIPPING</option><option value="flat">FLAT RATE</option><option value="worldwide_flat">WORLDWIDE FLAT RATE</option></select></div><div id="flatShippingFields"><div class="field"><label>AUSTRALIA SHIPPING PRICE (AUD)</label><input id="listingShippingPrice" type="number" min="0" step="0.01" value="0"></div><div class="field" id="internationalShippingField"><label>INTERNATIONAL SHIPPING PRICE (AUD)</label><input id="listingInternationalShippingPrice" type="number" min="0" step="0.01" value="0"></div></div><div class="two"><div class="field"><label>STATUS</label><select id="listingStatus"><option>Live</option><option>Draft</option></select></div><div class="field"><label>WEIGHT (GRAMS)</label><input id="listingWeight" type="number" min="0" step="1" value="0"></div></div><p class="note">Seller wallet: <span id="listingWallet">—</span>. This is automatically the connected wallet.</p><button class="primary" id="saveListing">SAVE LISTING</button><div class="status" id="listingStatusText"></div></div></div>
+<div class="modal" id="accountModal"><div class="modal-card"><div class="topline"><div><div class="eyebrow">WALLET ACCOUNT</div><h2 style="margin-top:4px">My Bopp</h2></div><button class="close-x" id="closeAccountBtn">×</button></div><p class="muted">One wallet. Buyer, seller, or both.</p><div class="wallet-box" id="accountWallet">—</div><div class="tabs"><button class="tab active" data-tab="orders">MY ORDERS</button><button class="tab" data-tab="store">MY STORE</button><button class="tab" data-tab="profile">PROFILE</button></div><section class="panel active" id="panel-orders"><div class="section-head"><h3>Orders I've made</h3><button class="secondary" id="refreshBuyer">REFRESH</button></div><div class="list" id="buyerOrders" style="margin-top:12px"></div></section><section class="panel" id="panel-store"><div class="section-head"><div><h3>My Store</h3><p class="note">Listings created here belong to this connected wallet. Payments for those listings are sent directly to this wallet.</p></div><button class="primary" id="newListingBtn">+ NEW LISTING</button></div><div class="list" id="sellerOrders" style="margin-top:18px"></div><h3 style="margin:24px 0 12px">My Listings</h3><div class="product-grid" id="sellerProducts"></div></section><section class="panel" id="panel-profile"><h3>Saved profile</h3><p class="note">These details are stored against the connected wallet. Countries are available worldwide.</p><div class="field"><label>FULL NAME</label><input id="profileName"></div><div class="field"><label>EMAIL</label><input id="profileEmail" type="email"></div><div class="field"><label>ADDRESS LINE 1</label><input id="profileAddress"></div><div class="field"><label>ADDRESS LINE 2 (OPTIONAL)</label><input id="profileAddress2"></div><div class="two"><div class="field"><label>CITY / SUBURB</label><input id="profileCity"></div><div class="field"><label>STATE / PROVINCE / REGION</label><input id="profileState"></div></div><div class="two"><div class="field"><label>POSTAL / ZIP CODE</label><input id="profilePostcode"></div><div class="field"><label>COUNTRY</label><select id="profileCountry"><option value="">Select country</option></select></div></div><button class="primary" id="saveProfile">SAVE PROFILE</button><div class="status" id="profileStatus"></div><p class="note" style="margin-top:15px">Signing in uses a free wallet message signature. It never requests or stores your private key and does not send SOL.</p><button class="danger" style="margin-top:12px" id="disconnectBtn">DISCONNECT WALLET</button></section></div></div>
+<div class="modal" id="listingModal"><div class="modal-card"><div class="topline"><div><div class="eyebrow">SELLER</div><h2 id="listingTitle">New Listing</h2></div><button class="close-x" id="closeListingBtn">×</button></div><div class="field"><label>PRODUCT NAME</label><input id="listingName"></div><div class="field"><label>DESCRIPTION</label><textarea id="listingDescription"></textarea></div><div class="two"><div class="field"><label>PRICE (AUD)</label><input id="listingPrice" type="number" min="0" step="0.01"></div><div class="field"><label>STOCK</label><input id="listingStock" type="number" min="0" step="1"></div></div><div class="two"><div class="field"><label>CATEGORY</label><input id="listingCategory" value="Other"></div><div class="field"><label>SKU</label><input id="listingSku"></div></div><div class="field"><label>PRODUCT IMAGE</label><input id="listingImageFile" type="file" accept="image/*" capture="environment"><div id="listingImagePreview" class="note" style="margin-top:8px">Choose a photo from your phone.</div><input id="listingImage" type="hidden"></div><div class="field"><label>SHIPPING OPTION</label><select id="listingShippingMode"><option value="free">FREE SHIPPING</option><option value="flat">FLAT RATE</option><option value="worldwide_flat">WORLDWIDE FLAT RATE</option></select></div><div id="flatShippingFields"><div class="field"><label>AUSTRALIA SHIPPING PRICE (AUD)</label><input id="listingShippingPrice" type="number" min="0" step="0.01" value="0"></div><div class="field" id="internationalShippingField"><label>INTERNATIONAL SHIPPING PRICE (AUD)</label><input id="listingInternationalShippingPrice" type="number" min="0" step="0.01" value="0"></div></div><div class="two"><div class="field"><label>STATUS</label><select id="listingStatus"><option>Live</option><option>Draft</option></select></div><div class="field"><label>WEIGHT (GRAMS)</label><input id="listingWeight" type="number" min="0" step="1" value="0"></div></div><p class="note">Seller wallet: <span id="listingWallet">—</span>. This is automatically the connected wallet.</p><button class="primary" id="saveListing">SAVE LISTING</button><div class="status" id="listingStatusText"></div></div></div>
 <div class="modal" id="sellerOrderModal"><div class="modal-card small-modal"><div class="topline"><div><div class="eyebrow">SELLER ORDER</div><h2>Fulfil order</h2></div><button class="close-x" id="closeSellerOrderBtn">×</button></div><div class="order-box" id="sellerOrderSummary"></div><div class="field"><label>FULFILMENT STATUS</label><select id="fulfilStatus"><option>Unfulfilled</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></div><div class="two"><div class="field"><label>CARRIER</label><input id="fulfilCarrier" placeholder="Australia Post"></div><div class="field"><label>TRACKING NUMBER</label><input id="fulfilTracking"></div></div><div class="field"><label>NOTES</label><textarea id="fulfilNotes"></textarea></div><button class="primary" id="saveOrderStatus">UPDATE ORDER</button><div class="status" id="sellerOrderStatus"></div></div></div>
 <script type="module">window.__web3Promise=import('https://esm.sh/@solana/web3.js@1.95.8?standalone').then(m=>{window.solanaWeb3=m;return m}).catch(e=>{window.__web3Error=e;throw e});</script>
 <script>
@@ -43,7 +220,7 @@ function closeCart(){$('cart').classList.remove('open')}
 function renderCart(){const country=$('shipCountry')?.value||'AU',sub=cart.reduce((n,x)=>n+Number(x.product.price)*Number(x.quantity),0),ship=cart.reduce((n,x)=>n+shippingForProduct(x.product,country),0);$('cartItems').innerHTML=cart.length?cart.map(x=>`<div class="item"><div class="item-top"><div><b>${escapeHtml(x.product.name)}</b><div class="muted">$${Number(x.product.price).toFixed(2)} × ${x.quantity}</div><div class="qty"><button data-minus="${escapeHtml(x.product_id)}">−</button><span>${x.quantity}</span><button data-plus="${escapeHtml(x.product_id)}">+</button><button class="remove" data-remove="${escapeHtml(x.product_id)}">Remove</button></div></div><b>$${(Number(x.product.price)*Number(x.quantity)).toFixed(2)}</b></div></div>`).join(''):'<div class="empty">Your cart is empty.</div>';$('cartItems').querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.minus,-1));$('cartItems').querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.plus,1));$('cartItems').querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>removeItem(b.dataset.remove));$('subtotal').textContent=`$${sub.toFixed(2)} AUD`;$('shippingTotal').textContent=`$${ship.toFixed(2)} AUD`;$('total').textContent=`$${(sub+ship).toFixed(2)} AUD`;$('checkoutBtn').disabled=!cart.length||!wallet}
 function fillProfile(p){p=p||{};$('profileName').value=p.display_name||'';$('profileEmail').value=p.email||'';$('profileAddress').value=p.shipping_address||'';$('profileAddress2').value=p.shipping_address2||'';$('profileCity').value=p.shipping_city||'';$('profileState').value=p.shipping_state||'';$('profilePostcode').value=p.shipping_postcode||'';$('profileCountry').value=p.shipping_country||'AU'}
 function fillShipping(p){p=p||{};$('shipName').value=p.shipping_name||p.display_name||'';$('shipEmail').value=p.email||'';$('shipAddress').value=p.shipping_address||'';$('shipAddress2').value=p.shipping_address2||'';$('shipCity').value=p.shipping_city||'';$('shipState').value=p.shipping_state||'';$('shipPostcode').value=p.shipping_postcode||'';$('shipCountry').value=p.shipping_country||'AU';renderCart()}
-async function connect(){const pr=provider();if(!pr){alert('Please open MINTFORGE in Solflare or a Solana wallet browser.');return}try{const r=await pr.connect();wallet=r.publicKey?.toString?.()||pr.publicKey?.toString?.();if(!wallet)throw Error('Wallet address not available');$('walletLabel').textContent='Connected: '+short(wallet);$('walletMini').textContent=short(wallet);$('accountBtn').classList.remove('hidden');$('connectBtn').textContent='CONNECTED';await signInAccount()}catch(e){console.error(e);wallet=null;sessionToken=null;$('walletLabel').textContent='Wallet not connected';$('walletMini').textContent='';$('accountBtn').classList.add('hidden');$('connectBtn').textContent='CONNECT WALLET';alert(e.message||'Wallet connection failed')}}
+async function connect(){const pr=provider();if(!pr){alert('Please open Bopp in Solflare or a Solana wallet browser.');return}try{const r=await pr.connect();wallet=r.publicKey?.toString?.()||pr.publicKey?.toString?.();if(!wallet)throw Error('Wallet address not available');$('walletLabel').textContent='Connected: '+short(wallet);$('walletMini').textContent=short(wallet);$('accountBtn').classList.remove('hidden');$('connectBtn').textContent='CONNECTED';await signInAccount()}catch(e){console.error(e);wallet=null;sessionToken=null;$('walletLabel').textContent='Wallet not connected';$('walletMini').textContent='';$('accountBtn').classList.add('hidden');$('connectBtn').textContent='CONNECT WALLET';alert(e.message||'Wallet connection failed')}}
 async function signInAccount(){if(!wallet)return;try{const c=await api(PROFILE_FN,{action:'challenge',wallet_address:wallet});const pr=provider();if(!pr.signMessage)throw Error('This wallet does not support message signing');const sig=await pr.signMessage(new TextEncoder().encode(c.message),'utf8');const bytes=sig?.signature||sig;const arr=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);const b64=btoa(String.fromCharCode(...arr));const v=await api(PROFILE_FN,{action:'verify',wallet_address:wallet,challenge_id:c.challenge_id,signature:b64});sessionToken=v.session_token;profile=v.profile||null;localStorage.setItem('mf_session_'+wallet,sessionToken);fillProfile(profile);fillShipping(profile);await loadSellerData()}catch(e){console.error(e);sessionToken=null;localStorage.removeItem('mf_session_'+wallet);throw Error('Wallet connected, but account sign-in was not completed: '+e.message)}}
 async function restoreSession(){if(!wallet)return false;const t=localStorage.getItem('mf_session_'+wallet);if(!t)return false;try{const d=await api(PROFILE_FN,{action:'profile',session_token:t});sessionToken=t;profile=d.profile||null;fillProfile(profile);fillShipping(profile);await loadSellerData();return true}catch{localStorage.removeItem('mf_session_'+wallet);return false}}
 async function loadSellerData(){if(!sessionToken)return;sellerData=await api(SELLER_FN,{action:'overview',session_token:sessionToken});renderSellerProducts();renderSellerOrders();await loadBuyerOrders()}
@@ -61,10 +238,10 @@ async function saveOrderStatus(){if(!currentSellerOrder)return;try{$('sellerOrde
 async function mfReadListingImage(){const f=document.getElementById('listingImageFile')?.files?.[0];if(!f)return;const preview=document.getElementById('listingImagePreview');preview.textContent='Preparing image…';if(!f.type.startsWith('image/'))throw Error('Please choose an image file.');const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)});const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=data});const max=800,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext('2d');if(!ctx)throw Error('Could not prepare image.');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);let quality=.78,compressed=c.toDataURL('image/jpeg',quality);while(compressed.length>150*1024&&quality>.42){quality-=.06;compressed=c.toDataURL('image/jpeg',quality)}if(compressed.length>150*1024){const smaller=Math.max(1,Math.round(max*.75)),sc=Math.min(1,smaller/Math.max(c.width,c.height));const c2=document.createElement('canvas');c2.width=Math.max(1,Math.round(c.width*sc));c2.height=Math.max(1,Math.round(c.height*sc));const ctx2=c2.getContext('2d');if(!ctx2)throw Error('Could not prepare image.');ctx2.fillStyle='#ffffff';ctx2.fillRect(0,0,c2.width,c2.height);ctx2.drawImage(c,0,0,c2.width,c2.height);quality=.7;compressed=c2.toDataURL('image/jpeg',quality);while(compressed.length>150*1024&&quality>.38){quality-=.06;compressed=c2.toDataURL('image/jpeg',quality)}}document.getElementById('listingImage').value=compressed;preview.innerHTML='<span class="success">Photo ready ✓</span> <span class="muted">'+Math.round(compressed.length/1024)+' KB</span>'}
 function mfSetupListingImage(){const input=document.getElementById('listingImageFile');if(!input||input.dataset.mfReady)return;input.dataset.mfReady='1';input.addEventListener('change',()=>mfReadListingImage().catch(e=>{document.getElementById('listingImagePreview').innerHTML='<span class="error">Could not read image.</span>'}))}
 function mfResetListingImage(){const f=document.getElementById('listingImageFile'),p=document.getElementById('listingImagePreview'),h=document.getElementById('listingImage');if(f)f.value='';if(h)h.value='';if(p)p.textContent='Choose a photo from your phone.';mfSetupListingImage()}
-function clearListingForm(){editingId=null;$('listingTitle').textContent='New Listing';$('listingName').value='';$('listingDescription').value='';$('listingPrice').value='';$('listingStock').value='';$('listingCategory').value='3D Print';$('listingSku').value='';$('listingImage').value='';mfResetListingImage();$('listingShippingMode').value='free';$('listingShippingPrice').value='0';$('listingInternationalShippingPrice').value='0';$('listingStatus').value='Live';$('listingWeight').value='0';$('listingWallet').textContent=wallet||'—';toggleShippingFields()}
+function clearListingForm(){editingId=null;$('listingTitle').textContent='New Listing';$('listingName').value='';$('listingDescription').value='';$('listingPrice').value='';$('listingStock').value='';$('listingCategory').value='Other';$('listingSku').value='';$('listingImage').value='';mfResetListingImage();$('listingShippingMode').value='free';$('listingShippingPrice').value='0';$('listingInternationalShippingPrice').value='0';$('listingStatus').value='Live';$('listingWeight').value='0';$('listingWallet').textContent=wallet||'—';toggleShippingFields()}
 function toggleShippingFields(){const s=$('listingShippingMode').value;$('flatShippingFields').style.display=s==='free'?'none':'block';$('internationalShippingField').style.display=s==='worldwide_flat'?'block':'none'}
 function newListing(){if(!wallet){alert('Connect your wallet first.');return}clearListingForm();$('listingModal').classList.add('open')}
-function editListing(id){const p=(sellerData.products||[]).find(x=>x.id===id);if(!p)return;editingId=id;$('listingTitle').textContent='Edit Listing';$('listingName').value=p.name||'';$('listingDescription').value=p.description||'';$('listingPrice').value=p.price??'';$('listingStock').value=p.stock??'';$('listingCategory').value=p.category||'3D Print';$('listingSku').value=p.sku||'';$('listingImage').value=p.image_url||'';mfSetupListingImage();$('listingImagePreview').innerHTML=p.image_url?'<span class="success">Current image loaded ✓</span>':'Choose a photo from your phone.';$('listingShippingMode').value=shippingStrategy(p);$('listingShippingPrice').value=p.shipping_price??0;$('listingInternationalShippingPrice').value=p.shipping_override_price??0;$('listingStatus').value=p.status||'Draft';$('listingWeight').value=p.weight_grams??0;$('listingWallet').textContent=wallet||'—';toggleShippingFields();$('listingModal').classList.add('open')}
+function editListing(id){const p=(sellerData.products||[]).find(x=>x.id===id);if(!p)return;editingId=id;$('listingTitle').textContent='Edit Listing';$('listingName').value=p.name||'';$('listingDescription').value=p.description||'';$('listingPrice').value=p.price??'';$('listingStock').value=p.stock??'';$('listingCategory').value=p.category||'Other';$('listingSku').value=p.sku||'';$('listingImage').value=p.image_url||'';mfSetupListingImage();$('listingImagePreview').innerHTML=p.image_url?'<span class="success">Current image loaded ✓</span>':'Choose a photo from your phone.';$('listingShippingMode').value=shippingStrategy(p);$('listingShippingPrice').value=p.shipping_price??0;$('listingInternationalShippingPrice').value=p.shipping_override_price??0;$('listingStatus').value=p.status||'Draft';$('listingWeight').value=p.weight_grams??0;$('listingWallet').textContent=wallet||'—';toggleShippingFields();$('listingModal').classList.add('open')}
 function closeListing(){$('listingModal').classList.remove('open')}
 async function saveListing(){try{$('saveListing').disabled=true;await mfReadListingImage();const strategy=$('listingShippingMode').value;const price=Number($('listingShippingPrice').value||0),intl=Number($('listingInternationalShippingPrice').value||0);if(price<0||intl<0)throw Error('Shipping prices cannot be negative.');const p={name:$('listingName').value.trim(),description:$('listingDescription').value.trim(),price:Number($('listingPrice').value||0),stock:Number($('listingStock').value||0),category:$('listingCategory').value.trim(),sku:$('listingSku').value.trim(),currency:'AUD',image_url:$('listingImage').value.trim(),shipping_required:true,shipping_strategy:strategy,shipping_mode:strategy==='free'?'free':'flat',shipping_price:strategy==='free'?0:price,shipping_override_price:strategy==='worldwide_flat'?intl:0,status:$('listingStatus').value,weight_grams:Number($('listingWeight').value||0)};if(!p.name)throw Error('Product name is required.');if(!Number.isFinite(p.price)||!Number.isFinite(p.stock))throw Error('Price and stock are required.');await api(SELLER_FN,{action:editingId?'update_product':'create_product',session_token:sessionToken,product_id:editingId,product:p});$('listingStatusText').innerHTML='<span class="success">Listing saved ✓</span>';await loadSellerData();await loadProducts();setTimeout(closeListing,400)}catch(e){$('listingStatusText').innerHTML='<span class="error">'+escapeHtml(e.message)+'</span>'}finally{$('saveListing').disabled=false}}
 async function saveProfile(){try{$('saveProfile').disabled=true;const p={display_name:$('profileName').value.trim(),email:$('profileEmail').value.trim(),shipping_address:$('profileAddress').value.trim(),shipping_address2:$('profileAddress2').value.trim(),shipping_city:$('profileCity').value.trim(),shipping_state:$('profileState').value.trim(),shipping_postcode:$('profilePostcode').value.trim(),shipping_country:$('profileCountry').value};await api(PROFILE_FN,{action:'update_profile',session_token:sessionToken,profile:p});profile={...(profile||{}),...p};fillProfile(profile);fillShipping(profile);$('profileStatus').innerHTML='<span class="success">Profile saved ✓</span>'}catch(e){$('profileStatus').innerHTML='<span class="error">'+escapeHtml(e.message)+'</span>'}finally{$('saveProfile').disabled=false}}
@@ -73,6 +250,17 @@ async function disconnect(){try{if(sessionToken)await api(PROFILE_FN,{action:'lo
 $('closeCartBtn').onclick=closeCart;$('continueBtn').onclick=()=>$('confirmModal').classList.remove('open');$('viewOrdersBtn').onclick=()=>{$('confirmModal').classList.remove('open');openAccount('orders')};$('closeAccountBtn').onclick=closeAccount;$('connectBtn').onclick=()=>wallet?openAccount('profile'):connect();$('accountBtn').onclick=()=>openAccount('orders');$('saveProfile').onclick=saveProfile;$('newListingBtn').onclick=newListing;$('saveListing').onclick=saveListing;$('closeListingBtn').onclick=closeListing;$('saveOrderStatus').onclick=saveOrderStatus;$('closeSellerOrderBtn').onclick=closeSellerOrder;mfSetupListingImage();$('refreshBuyer').onclick=loadBuyerOrders;$('disconnectBtn').onclick=disconnect;$('checkoutBtn').onclick=checkout;$('listingShippingMode').onchange=toggleShippingFields;$('shipCountry').onchange=renderCart;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 window.addEventListener('load',()=>{const p=provider();if(p){p.on?.('accountChanged',async next=>{const nw=next?.publicKey?next.publicKey.toString():next?.toString?.()||'';if(nw&&nw!==wallet){disconnect().finally(()=>{wallet=nw;connect()})}});p.on?.('disconnect',()=>disconnect())}})
 loadProducts();renderCart();
+
+const boppCartBtn=document.getElementById('cartHeadBtn');
+const boppHeroSell=document.getElementById('heroSell');
+const boppNavSell=document.getElementById('navSell');
+if(boppCartBtn)boppCartBtn.onclick=()=>document.getElementById('cart').classList.add('open');
+if(boppHeroSell)boppHeroSell.onclick=()=>wallet?newListing():connect();
+if(boppNavSell)boppNavSell.onclick=(e)=>{e.preventDefault();wallet?newListing():connect()};
+function boppUpdateCartCount(){const n=cart.reduce((s,i)=>s+Number(i.quantity||0),0);const el=document.getElementById('cartCount');if(el)el.textContent=n}
+const boppOriginalRenderCart=renderCart;
+renderCart=function(){boppOriginalRenderCart();boppUpdateCartCount()};
+
 </script>
 <script src="./countries.js"></script>
 </body>
